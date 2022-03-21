@@ -20,7 +20,6 @@ import java.util.Map;
  */
 public class MessageParsing implements IEarlyWarnMessageCompiler {
 
-
     /**
      * 构建单个消息
      * @param expression 表达式
@@ -41,7 +40,13 @@ public class MessageParsing implements IEarlyWarnMessageCompiler {
             if("fsnl_fremark".equals(field)){
                 String pkid=data.getString("id");
                 String url=System.getProperty("domain.contextUrl");
-                value = "\t\n"+"链接地址："+url+"/mobile.html?pkId="+pkid+"&form=fsnl_infolist_mob";//自定义字段内容
+                int i = url.length();
+                String laststr=url.substring(i-1);
+                if("/".equals(laststr)){//不确定domain.contextUrl是不是已/结尾
+                    value = "\t\n"+"链接地址："+url+"mobile.html?pkId="+pkid+"&form=fsnl_infolist_mob";//自定义字段内容
+                }else {
+                    value = "\t\n" + "链接地址：" + url + "/mobile.html?pkId=" + pkid + "&form=fsnl_infolist_mob";//自定义字段内容
+                }
             }else{
                 String[] arr = StringUtil.split(field,".");
                 Object objValue = getValue(data, arr);
