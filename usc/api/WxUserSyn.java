@@ -24,7 +24,7 @@ public class WxUserSyn implements IBillWebApiPlugin {
 
     @Override
     public ApiResult doCustomService(Map<String, Object> params) {
-        Long orgId = 100000L;
+        Long orgId = 100000L;//组织Id
         ApiResult apiResult = new ApiResult();
         //是否启用企业微信
         String isenablewxqyh = SystemParamHelper.getParamValue("isenablewxqyh",orgId);
@@ -34,10 +34,11 @@ public class WxUserSyn implements IBillWebApiPlugin {
             //企业微信密钥
             String corpsecret = SystemParamHelper.getParamValue("corpsecret",orgId);
             String userid = params.get("id").toString();//企业微信userid
-            String changeType = params.get("changeType").toString();//变更的类型
-            int index1 = changeType.lastIndexOf("_");
-            //然后获取从最后一个\所在索引+1开始 至 字符串末尾的字符
-            String type = changeType.substring(index1 + 1);
+            //企业微信回调事件的类型,将其截取,用来判断是部分的修改回调还是用户的修改回调
+            String changeType = params.get("changeType").toString();
+            int index = changeType.lastIndexOf("_");
+            //然后获取从最后一个_所在索引+1开始 至 字符串末尾的字符
+            String type = changeType.substring(index + 1);
             if ("user".equals(type)) {
                 //企业微信同步到用户中心
                 WxToUscByCallBack.userSyn(corpid, corpsecret, userid, changeType);
