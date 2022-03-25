@@ -5,8 +5,6 @@ import kd.bos.dataentity.entity.DynamicObjectCollection;
 import kd.bos.entity.plugin.AbstractOperationServicePlugIn;
 import kd.bos.entity.plugin.AddValidatorsEventArgs;
 import kd.bos.entity.plugin.PreparePropertysEventArgs;
-import kd.bos.entity.plugin.args.ValidatePrefixArgs;
-import kd.bos.exception.KDBizException;
 
 import java.util.Date;
 

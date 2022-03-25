@@ -8,7 +8,10 @@ import kd.bos.entity.AppInfo;
 import kd.bos.entity.AppMetadataCache;
 import kd.bos.entity.param.AppParam;
 import kd.bos.form.control.events.ItemClickEvent;
+import kd.bos.form.plugin.AbstractFormPlugin;
+import kd.bos.form.plugin.AbstractMobFormPlugin;
 import kd.bos.list.plugin.AbstractListPlugin;
+import kd.bos.list.plugin.AbstractMobListPlugin;
 import kd.bos.servicehelper.parameter.SystemParamServiceHelper;
 import kd.bos.servicehelper.user.UserServiceHelper;
 
@@ -27,6 +30,7 @@ public class WxUsertListPlugin  extends AbstractListPlugin {
 
     @Override
     public void itemClick(ItemClickEvent evt) {
+
         //企业微信同步按钮
         if ("fsnl_qywxsyn".equals(evt.getItemKey())) {
             long orgId = RequestContext.get().getOrgId();

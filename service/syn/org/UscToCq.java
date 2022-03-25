@@ -239,7 +239,7 @@ public class UscToCq {
             }
         }
         //保存数据
-        UserServiceHelper.add(insertList);
+
         //修改数据
         UserServiceHelper.update(updateList);
         //更新上级部门
