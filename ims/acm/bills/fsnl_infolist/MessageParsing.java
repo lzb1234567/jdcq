@@ -41,12 +41,13 @@ public class MessageParsing implements IEarlyWarnMessageCompiler {
                 String pkid=data.getString("id");
                 String url=System.getProperty("domain.contextUrl");
                 int i = url.length();
-                String laststr=url.substring(i-1);
-                if("/".equals(laststr)){//不确定domain.contextUrl是不是已/结尾
-                    value = "\t\n"+"链接地址："+url+"mobile.html?pkId="+pkid+"&form=fsnl_infolist_mob";//自定义字段内容
+                String lastStr=url.substring(i-1);
+               /* if("/".equals(lastStr)){//不确定domain.contextUrl是不是已/结尾
+                    value = "\t\n"+"链接地址："+url+"mobile.html?pkId="+pkid+"&form=fsnl_infolist_mob"+"\t\n"+"url:"+url+"\t\n"+"i:"+i+"\t\n"+"lastStr:"+lastStr;//自定义字段内容
                 }else {
-                    value = "\t\n" + "链接地址：" + url + "/mobile.html?pkId=" + pkid + "&form=fsnl_infolist_mob";//自定义字段内容
-                }
+                    value = "\t\n" + "链接地址：" + url + "/mobile.html?pkId=" + pkid + "&form=fsnl_infolist_mob"+"\t\n"+"url:"+url+"\t\n"+"i:"+i+"\t\n"+"lastStr:"+lastStr;//自定义字段内容
+                }*/
+               value="\t\n" + "链接地址：" +"data-center-fat.jinduo.com/ierp/mobile.html?pkId="+ pkid + "&form=fsnl_infolist_mob";
             }else{
                 String[] arr = StringUtil.split(field,".");
                 Object objValue = getValue(data, arr);
