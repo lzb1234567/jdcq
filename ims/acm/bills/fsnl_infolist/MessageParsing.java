@@ -5,6 +5,8 @@ import kd.bos.entity.earlywarn.EarlyWarnContext;
 import kd.bos.entity.earlywarn.kit.StringTemplateParser;
 import kd.bos.entity.earlywarn.warn.plugin.IEarlyWarnMessageCompiler;
 import kd.bos.ksql.util.StringUtil;
+import kd.bos.logging.Log;
+import kd.bos.logging.LogFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import java.util.Map;
  */
 public class MessageParsing implements IEarlyWarnMessageCompiler {
 
+    private final static Log logger = LogFactory.getLog(MessageParsing.class);
     /**
      * 构建单个消息
      * @param expression 表达式
@@ -34,6 +37,7 @@ public class MessageParsing implements IEarlyWarnMessageCompiler {
             return "";
         }
 
+
         Map<String,String> macroMap = new HashMap<>();
         for (String field: fields) {//遍历自定义解析
             String value = "";
@@ -42,12 +46,13 @@ public class MessageParsing implements IEarlyWarnMessageCompiler {
                 String url=System.getProperty("domain.contextUrl");
                 int i = url.length();
                 String lastStr=url.substring(i-1);
-               /* if("/".equals(lastStr)){//不确定domain.contextUrl是不是已/结尾
-                    value = "\t\n"+"链接地址："+url+"mobile.html?pkId="+pkid+"&form=fsnl_infolist_mob"+"\t\n"+"url:"+url+"\t\n"+"i:"+i+"\t\n"+"lastStr:"+lastStr;//自定义字段内容
+                if("/".equals(lastStr)){//不确定domain.contextUrl是不是已/结尾
+                    value = "\t\n"+"链接地址："+url+"mobile.html?pkId="+pkid+"&form=fsnl_infolist_mob";//自定义字段内容
                 }else {
-                    value = "\t\n" + "链接地址：" + url + "/mobile.html?pkId=" + pkid + "&form=fsnl_infolist_mob"+"\t\n"+"url:"+url+"\t\n"+"i:"+i+"\t\n"+"lastStr:"+lastStr;//自定义字段内容
-                }*/
-               value="\t\n" + "链接地址：" +"data-center-fat.jinduo.com/ierp/mobile.html?pkId="+ pkid + "&form=fsnl_infolist_mob";
+                    value = "\t\n" + "链接地址：" + url + "/mobile.html?pkId=" + pkid + "&form=fsnl_infolist_mob";//自定义字段内容
+                }
+                logger.info("su=================================================================>"+"/".equals(lastStr)+""+"\t\n"+value+"\t\n"+lastStr);
+                //value="\t\n" + "链接地址：" +"data-center-fat.jinduo.com/ierp/mobile.html?pkId="+ pkid + "&form=fsnl_infolist_mob";
             }else{
                 String[] arr = StringUtil.split(field,".");
                 Object objValue = getValue(data, arr);
