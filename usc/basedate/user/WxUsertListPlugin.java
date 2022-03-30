@@ -30,7 +30,6 @@ public class WxUsertListPlugin  extends AbstractListPlugin {
 
     @Override
     public void itemClick(ItemClickEvent evt) {
-
         //企业微信同步按钮
         if ("fsnl_qywxsyn".equals(evt.getItemKey())) {
             long orgId = RequestContext.get().getOrgId();
@@ -42,8 +41,10 @@ public class WxUsertListPlugin  extends AbstractListPlugin {
                     String corpid = SystemParamHelper.getParamValue("corpid");
                     //企业微信密钥
                     String corpsecret = SystemParamHelper.getParamValue("corpsecret");
-                    //WxToUsc.sysJob(corpid,corpsecret);//企业微信同步至用户中心
-                    UscToCq.sysJob();//用户中心同步至苍穹平台
+                    //企业微信同步至用户中心
+                    WxToUsc.sysJob(corpid,corpsecret);
+                    //用户中心同步至苍穹平台
+                    UscToCq.sysJob();
                 }
             }else{
                 this.getView().showMessage("需要在人员中设置组织,才能执行此操作。");
