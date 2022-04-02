@@ -13,6 +13,8 @@ import kd.bos.dataentity.metadata.dynamicobject.DynamicObjectType;
 import kd.bos.entity.EntityMetadataCache;
 import kd.bos.entity.operate.result.OperationResult;
 import kd.bos.entity.property.BasedataProp;
+import kd.bos.logging.Log;
+import kd.bos.logging.LogFactory;
 import kd.bos.orm.query.QFilter;
 import kd.bos.servicehelper.BusinessDataServiceHelper;
 import kd.bos.servicehelper.DBServiceHelper;
@@ -30,6 +32,7 @@ import java.util.*;
  * @Date 2022/2/19 14:33
  */
 public class WxToUsc {
+    private final static Log logger = LogFactory.getLog(WxToUsc.class);
     private static String departmentName = "fsnl_usc_department";//组织的标识
     private static String userName = "fsnl_usc_user";//人员的标识
     private static String userid = RequestContext.get().getUid();//当前用户
@@ -156,6 +159,8 @@ public class WxToUsc {
         //保存数据
         DynamicObject[] newInsertObjects = insertList.toArray(new DynamicObject[insertList.size()]);
         OperationResult operationResult = OperationServiceHelper.executeOperate("save", departmentName, newInsertObjects, OperateOption.create());
+        //记录数据插入的情况
+        logger.info("同步用户中心部门结果信息：=======================》"+operationResult.getMessage());
         //重新获取保存后的数据
         List<Object> successPkIds = operationResult.getSuccessPkIds();
         DynamicObject[] resultObjects = BusinessDataServiceHelper.load(successPkIds.toArray(), EntityMetadataCache.getDataEntityType(departmentName));
@@ -351,6 +356,7 @@ public class WxToUsc {
         DynamicObject[] newInsertObjects = insertList.toArray(new DynamicObject[insertList.size()]);
         //补充直接上级数据
         OperationResult operationResult = OperationServiceHelper.executeOperate("save", userName, newInsertObjects, OperateOption.create());
+        logger.info("同步用户中心人员结果信息：=======================》"+operationResult.getMessage());
         List<Object> successPkIds = operationResult.getSuccessPkIds();
         DynamicObject[] newUserObjects = BusinessDataServiceHelper.load(successPkIds.toArray(), EntityMetadataCache.getDataEntityType(userName));
         setSuperiorObject(newUserObjects,wx_map);

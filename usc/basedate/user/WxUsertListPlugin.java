@@ -4,20 +4,8 @@ import fsnl.service.kingdee.SystemParamHelper;
 import fsnl.service.syn.org.UscToCq;
 import fsnl.service.syn.org.WxToUsc;
 import kd.bos.context.RequestContext;
-import kd.bos.entity.AppInfo;
-import kd.bos.entity.AppMetadataCache;
-import kd.bos.entity.param.AppParam;
 import kd.bos.form.control.events.ItemClickEvent;
-import kd.bos.form.plugin.AbstractFormPlugin;
-import kd.bos.form.plugin.AbstractMobFormPlugin;
 import kd.bos.list.plugin.AbstractListPlugin;
-import kd.bos.list.plugin.AbstractMobListPlugin;
-import kd.bos.servicehelper.parameter.SystemParamServiceHelper;
-import kd.bos.servicehelper.user.UserServiceHelper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @description：用户中心人员列表，表单插件
