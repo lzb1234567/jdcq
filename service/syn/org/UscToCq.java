@@ -198,9 +198,9 @@ public class UscToCq {
 
             // 职位分录
             List<Map<String, Object>> posList = new ArrayList<>();
-            DynamicObjectCollection uscUserdept = uscUser_do.getDynamicObjectCollection("fsnl_userdept");
-            for (int i = 0; i < uscUserdept.size(); i++) {
-                DynamicObject userDept = uscUserdept.get(i);
+            DynamicObjectCollection uscUserDepts = uscUser_do.getDynamicObjectCollection("fsnl_userdept");
+            for (int i = 0; i < uscUserDepts.size(); i++) {
+                DynamicObject userDept = uscUserDepts.get(i);
                 Map<String, Object> entryentity = new HashMap<>();
                 DynamicObject uscUserDept = userDept.getDynamicObject("fsnl_fdeptid");
                 Map<String, Object> dptNumMap = new HashMap<>();

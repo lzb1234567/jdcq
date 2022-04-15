@@ -93,12 +93,14 @@ public class WxDepartmentServiceHelper extends WxParent {
         JSONArray dept_jsonArray = new JSONArray();
 
         //获取根部门，金舵陶瓷有限公司,id为1
-        JSONObject jsonObject_1 = JSONObject.parseObject(getDepartment(corpid, corpsecret, "1"));
-        dept_jsonArray.add(jsonObject_1);
-        for (String id : idLsit) {
-            if (!id.equals("1")) {
-                JSONArray jsonArray = JSONArray.parseArray(getDepartmentList(corpid, corpsecret, id));
-                dept_jsonArray.addAll(jsonArray);
+        JSONObject dept_jsonObject = JSONObject.parseObject(getDepartment(corpid, corpsecret, "1"));
+        if (dept_jsonObject!=null) {
+            dept_jsonArray.add(dept_jsonObject);
+            for (String id : idLsit) {
+                if (!id.equals("1")) {
+                    JSONArray jsonArray = JSONArray.parseArray(getDepartmentList(corpid, corpsecret, id));
+                    dept_jsonArray.addAll(jsonArray);
+                }
             }
         }
         return dept_jsonArray;

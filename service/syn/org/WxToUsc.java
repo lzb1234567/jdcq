@@ -134,7 +134,7 @@ public class WxToUsc {
                     usc_department.set("fsnl_forgpattenid_id",2);//公司
                 }else {
                     //usc_department.set("fsnl_forgpattenid",orgform06);//部门
-                    usc_department.set("fsnl_forgpattenid_id",6);//部门
+                    usc_department.set("fsnl_forgpattenid_id",4);//部门
                 }
                 usc_department.set("enable","1");//使用状态，默认为可用，1
                 //usc_department.set("level","0");//级次
@@ -150,6 +150,18 @@ public class WxToUsc {
             DynamicObject[] updateObjects = getDeptObject(update_id_list);
             for (DynamicObject updateObject : updateObjects) {
                 JSONObject dept_jsonObject = wx_map.get(updateObject.getString("number"));
+                String dept_id = dept_jsonObject.getString("id");
+                //形态
+                if ("1".equals(dept_id)) {//根部门
+                    //usc_department.set("fsnl_forgpattenid",orgform01);//集团
+                    updateObject.set("fsnl_forgpattenid_id",1);//集团
+                }else if ("7".equals(dept_id)||"43".equals(dept_id)){//集团公司或者星星易装
+                    //usc_department.set("fsnl_forgpattenid",orgform02);//公司
+                    updateObject.set("fsnl_forgpattenid_id",2);//公司
+                }else {
+                    //usc_department.set("fsnl_forgpattenid",orgform06);//部门
+                    updateObject.set("fsnl_forgpattenid_id",4);//部门
+                }
                 updateObject.set("name",dept_jsonObject.getString("name"));//名称
                 updateObject.set("modifier",userid);//修改人
                 updateObject.set("modifytime",new Date());//修改时间
@@ -159,8 +171,6 @@ public class WxToUsc {
         //保存数据
         DynamicObject[] newInsertObjects = insertList.toArray(new DynamicObject[insertList.size()]);
         OperationResult operationResult = OperationServiceHelper.executeOperate("save", departmentName, newInsertObjects, OperateOption.create());
-        //记录数据插入的情况
-        logger.info("同步用户中心部门结果信息：=======================》"+operationResult.getMessage());
         //重新获取保存后的数据
         List<Object> successPkIds = operationResult.getSuccessPkIds();
         DynamicObject[] resultObjects = BusinessDataServiceHelper.load(successPkIds.toArray(), EntityMetadataCache.getDataEntityType(departmentName));
@@ -183,9 +193,18 @@ public class WxToUsc {
         List<String> uscDepartmentIdList = getUscDepartmentIdList();
         DynamicObject[] uscDept_dos = getDeptObject(uscDepartmentIdList);
         Map<String,DynamicObject> deptMap = new HashMap<>();
-        for (DynamicObject uscDept_do : uscDept_dos) {
-            deptMap.put(uscDept_do.getString("number"),uscDept_do);
+        if (uscDept_dos!=null) {
+            for (DynamicObject uscDept_do : uscDept_dos) {
+                //使用状态
+                String enable = uscDept_do.getString("enable");
+                //是否手工新增
+                boolean handword = uscDept_do.getBoolean("fsnl_fhandword");
+                //非禁用和非手工新增的才插入map
+                if ("1".equals(enable)&&!handword)
+                    deptMap.put(uscDept_do.getString("number"),uscDept_do);
+            }
         }
+
         //如果id存在于用户中心，则为需要更新的数据，反之为需要insert的数据
         for (String id : wx_map.keySet()) {
             if (uscUserIdList.contains(id)) {
@@ -310,7 +329,7 @@ public class WxToUsc {
                     JSONArray departmentIds = user_jsonObject.getJSONArray("department");
                     JSONArray isLeaderInDepts = user_jsonObject.getJSONArray("is_leader_in_dept");
                     for (int i = 0; i < departmentIds.size(); i++) {
-                        String deptId = departmentIds.getString(i);
+                        String deptId = departmentIds.getString(i);//部门编码
                         String leaderInDept = isLeaderInDepts.getString(i);
                         DynamicObject userdept_do = new DynamicObject(userDept_doc.getDynamicObjectType());//获取单据体数据类型
                         userdept_do.set("fsnl_fdeptid",deptMap.get(deptId));//用户中心组织
@@ -356,7 +375,6 @@ public class WxToUsc {
         DynamicObject[] newInsertObjects = insertList.toArray(new DynamicObject[insertList.size()]);
         //补充直接上级数据
         OperationResult operationResult = OperationServiceHelper.executeOperate("save", userName, newInsertObjects, OperateOption.create());
-        logger.info("同步用户中心人员结果信息：=======================》"+operationResult.getMessage());
         List<Object> successPkIds = operationResult.getSuccessPkIds();
         DynamicObject[] newUserObjects = BusinessDataServiceHelper.load(successPkIds.toArray(), EntityMetadataCache.getDataEntityType(userName));
         setSuperiorObject(newUserObjects,wx_map);
@@ -425,9 +443,11 @@ public class WxToUsc {
      */
     private static List<String> getUpdateIdList(List<String> wxIdList,List<String> uscIdList){
         List<String> list = new ArrayList<>();
-        for (String id : wxIdList) {
-            if (!uscIdList.contains(id)) {
-                list.add(id);
+        if (!(uscIdList.size()==0||uscIdList==null)) {
+            for (String id : wxIdList) {
+                if (!uscIdList.contains(id)) {
+                    list.add(id);
+                }
             }
         }
         return list;
