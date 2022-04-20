@@ -64,12 +64,22 @@ public class DataUpdatePlugin extends AbstractOperationServicePlugIn {
             DynamicObject lastObj = entryEntity.get(entryEntity.size() - 1);
 
 
-            //判断单锯体续费信息是否存在记录，是
+            //判断单锯体续费信息是否存在记录
             if (lastObj.get("fsnl_fentbegindate") != null) {
                 //判断单锯体续费信息行号最大的记录中，续费日期是否=单据头的购入日期，是就结束，不是就继续
                 Date fbeginDate = (Date) dataEntities[0].get("fsnl_fbegindate");
                 Date fentbeginDate = (Date) lastObj.get("fsnl_fentbegindate");
-                if (fbeginDate.toString().equals(fentbeginDate.toString())) {
+                //先加个判断单头时间是否为空，空的话把最新一笔数据更新到表头22420
+                if(fbeginDate==null){
+                    dataEntities[0].set("fsnl_fbegindate", lastObj.get("fsnl_fentbegindate"));//购入日期
+                    dataEntities[0].set("fsnl_fenddate", lastObj.get("fsnl_fentenddate"));//到期日期
+                    dataEntities[0].set("fsnl_fcalculate", lastObj.get("fsnl_fentcalculate"));//计费方式
+                    dataEntities[0].set("fsnl_funitid", lastObj.get("fsnl_fentunitid"));//计量单位
+                    dataEntities[0].set("fsnl_fcost", lastObj.get("fsnl_fentcost"));//续费金额
+                    dataEntities[0].set("fsnl_fqty", lastObj.get("fsnl_fentqty"));//续费数量
+                }
+                //end
+                else if (fbeginDate.toString().equals(fentbeginDate.toString())) {
                     dataEntities[0].set("fsnl_fenddate", lastObj.get("fsnl_fentenddate"));//到期日期
                     dataEntities[0].set("fsnl_fcalculate", lastObj.get("fsnl_fentcalculate")); //计费方式
                     dataEntities[0].set("fsnl_funitid", lastObj.get("fsnl_fentunitid"));  //计量单位
@@ -89,6 +99,18 @@ public class DataUpdatePlugin extends AbstractOperationServicePlugIn {
                     }
                 }
             }
+
+            //判断单锯体续费信息的购入日期是否存在，不存在的时候也让它更新至单据头22420
+            if (lastObj.get("fsnl_fentbegindate") == null) {
+                dataEntities[0].set("fsnl_fbegindate", lastObj.get("fsnl_fentbegindate"));//购入日期
+                dataEntities[0].set("fsnl_fenddate", lastObj.get("fsnl_fentenddate"));//到期日期
+                dataEntities[0].set("fsnl_fcalculate", lastObj.get("fsnl_fentcalculate"));//计费方式
+                dataEntities[0].set("fsnl_funitid", lastObj.get("fsnl_fentunitid"));//计量单位
+                dataEntities[0].set("fsnl_fcost", lastObj.get("fsnl_fentcost"));//续费金额
+                dataEntities[0].set("fsnl_fqty", lastObj.get("fsnl_fentqty"));//续费数量
+
+            }
+
         }
 
     }
