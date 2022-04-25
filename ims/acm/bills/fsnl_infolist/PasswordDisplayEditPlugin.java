@@ -97,19 +97,5 @@ public class PasswordDisplayEditPlugin extends AbstractBillPlugIn {
         }
     }
 
-    /**
-     * 点击操作前，触发此事件
-     * 点击提交前触发保存操作
-     * @param args
-     */
-    @Override
-    public void beforeDoOperation(BeforeDoOperationEventArgs args) {
-        String key_opkey= "submit";//提交标识
-        FormOperate formOperate = (FormOperate) args.getSource();
-        if (StringUtils.equals(key_opkey,formOperate.getOperateKey())){
-            this.getView().invokeOperation("save");
 
-        }
-
-    }
 }

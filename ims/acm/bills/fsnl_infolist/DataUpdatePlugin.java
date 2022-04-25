@@ -1,10 +1,13 @@
 package fsnl.ims.acm.bills.fsnl_infolist;
 
+import kd.bos.business.plugin.CodeRuleOp;
 import kd.bos.dataentity.entity.DynamicObject;
 import kd.bos.dataentity.entity.DynamicObjectCollection;
 import kd.bos.entity.plugin.AbstractOperationServicePlugIn;
 import kd.bos.entity.plugin.AddValidatorsEventArgs;
 import kd.bos.entity.plugin.PreparePropertysEventArgs;
+import kd.bos.entity.plugin.args.BeforeOperationArgs;
+import kd.bos.servicehelper.operation.SaveServiceHelper;
 
 import java.util.Date;
 
@@ -25,13 +28,26 @@ public class DataUpdatePlugin extends AbstractOperationServicePlugIn {
      */
     @Override
     public void onPreparePropertys(PreparePropertysEventArgs e) {
-        //要求加载购入日期，续费日期
-        e.getFieldKeys().add("fsnl_fbegindate");
+        e.getFieldKeys().add("fsnl_itm_renewalentry");
         e.getFieldKeys().add("fsnl_fentbegindate");
-        e.getFieldKeys().add("fsnl_fcalculate");
-        e.getFieldKeys().add("fsnl_fcost");
+        e.getFieldKeys().add("fsnl_fentenddate");
         e.getFieldKeys().add("fsnl_fentcalculate");
+        e.getFieldKeys().add("fsnl_fentunitid");
+        e.getFieldKeys().add("fsnl_fentqty");
+        e.getFieldKeys().add("fsnl_fentcurrency");
         e.getFieldKeys().add("fsnl_fentcost");
+        e.getFieldKeys().add("fsnl_fentcharger");
+        e.getFieldKeys().add("fsnl_fentremark");
+
+        e.getFieldKeys().add("fsnl_fbegindate");
+        e.getFieldKeys().add("fsnl_fenddate");
+        e.getFieldKeys().add("fsnl_fcalculate");
+        e.getFieldKeys().add("fsnl_funitid");
+        e.getFieldKeys().add("fsnl_fqty");
+        e.getFieldKeys().add("fsnl_currency");
+        e.getFieldKeys().add("fsnl_fcost");
+        e.getFieldKeys().add("fsnl_fcharger");
+        e.getFieldKeys().add("fsnl_fremark");
     }
 
 
@@ -114,7 +130,5 @@ public class DataUpdatePlugin extends AbstractOperationServicePlugIn {
         }
 
     }
-
-
 
 }
