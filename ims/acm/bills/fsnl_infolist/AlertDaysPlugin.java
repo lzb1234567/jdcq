@@ -55,19 +55,19 @@ public class AlertDaysPlugin extends AbstractFormPlugin implements IEarlyWarnCon
             } else {
                 //用正则表达式进行测试
                 //分割，判断输入的字符是否为数字
-                String tian = alertdays.replaceAll(" ", "");//去空格
-                String[] tianshu = tian.split(",");//用,进行分割符
-                boolean jieguo = true;
-                for (String st : tianshu) {//遍历得到的天数
+                String day = alertdays.replaceAll(" ", "");//去空格
+                String[] numofdays = day.split(",");//用,进行分割符
+                boolean result = true;
+                for (String st : numofdays) {//遍历得到的天数
                     if (isNumericzidai(st)) {
-                        jieguo = true;
+                        result = true;
                     } else {
-                        jieguo = false;
+                        result = false;
                         break;
 
                     }
                 }
-                if (jieguo) {
+                if (result) {
                     return EarlyWarnConditionCheckResult.success("");
                 } else {
                     return EarlyWarnConditionCheckResult.failure("输入预警天数有误,请重新填写");
@@ -95,6 +95,7 @@ public class AlertDaysPlugin extends AbstractFormPlugin implements IEarlyWarnCon
      * @param str
      * @return
      */
+
     public static boolean isNumericzidai(String str) {
         Pattern pattern = Pattern.compile("-?[0-9]+(\\.[0-9]+)?");
         Matcher isNum = pattern.matcher(str);

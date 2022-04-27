@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author 苏俊安
  * @version 1.00
- * @description:自定义消息解析
+ * @description:自定义消息解析（预警消息内容里拼接链接地址进去）
  * @ClassName:MessageParsing.java
  * @Date 2022/3/18 8:58
  */

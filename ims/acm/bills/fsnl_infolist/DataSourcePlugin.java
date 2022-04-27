@@ -32,8 +32,8 @@ public class DataSourcePlugin extends DefaultEarlyWarnBillDataSource {
 
         String alertdays = (String) customConditionMap.get("alertdays");
 
-        String tian = alertdays.replaceAll(" ", "");//去空格
-        String[] str = tian.split(",");//用,进行分割符
+        String numofdays = alertdays.replaceAll(" ", "");//去空格
+        String[] str = numofdays.split(",");//用,进行分割符
         List<Date> timeList = new ArrayList<>();//时间集合
         for (String st : str) {//遍历得到的天数
             //获取今天之后的日期
