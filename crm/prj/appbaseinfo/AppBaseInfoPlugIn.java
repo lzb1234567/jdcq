@@ -1,6 +1,7 @@
 package fsnl.crm.prj.appbaseinfo;
 
 import fsnl.common.util.number.DoubleUtil;
+import fsnl.common.util.str.StringUtil;
 import kd.bos.bill.AbstractBillPlugIn;
 import kd.bos.dataentity.entity.DynamicObject;
 import kd.bos.dataentity.metadata.IDataEntityProperty;
@@ -9,6 +10,7 @@ import kd.bos.form.control.Control;
 import kd.bos.form.field.BasedataEdit;
 import kd.bos.orm.query.QFilter;
 import kd.bos.servicehelper.BusinessDataServiceHelper;
+import kd.bos.servicehelper.QueryServiceHelper;
 import kd.fi.bcm.formplugin.database.BaseDataEditExt;
 import org.apache.poi.hpsf.Decimal;
 
@@ -68,36 +70,54 @@ public class AppBaseInfoPlugIn extends AbstractBillPlugIn {
         double lng = Double.parseDouble(longitude);
         //维度
         double lat = Double.parseDouble(dimensionality);
-        //先计算查询点的经纬度范围
-        double r = 6371;//地球半径千米
-        double dis = 0.5;//0.5千米距离
-        double dlng =  2*Math.asin(Math.sin(dis/(2*r))/Math.cos(lat*Math.PI/180));
-        dlng = dlng*180/Math.PI;//角度转为弧度
-        double dlat = dis/r;
-        dlat = dlat*180/Math.PI;
-        double minlat =lat-dlat;
-        double maxlat = lat+dlat;
-        double minlng = lng -dlng;
-        double maxlng = lng + dlng;
         QFilter qFilter_source = new QFilter("source","=","fsnl_prj_appbaseinfo");//单据标识，即工程报备单标识
         QFilter qFilter_id = new QFilter("id","!=",billAddresId);//将本单关联的地址信息排除
-        //判断方圆区间是否有工程报备
-        QFilter qFilter_minlng = new QFilter("longitude",">", minlng);
-        QFilter qFilter_maxlng = new QFilter("longitude","<",maxlng);
-        QFilter qFilter_minlat = new QFilter("latitude",">",minlat);
-        QFilter qFilter_maxlat = new QFilter("latitude","<",maxlat);
-        QFilter[] filters_scope = {qFilter_minlat,qFilter_maxlat,qFilter_minlng,qFilter_maxlng,qFilter_source,qFilter_id};
-        DynamicObject[] address_scope = BusinessDataServiceHelper.load("cts_address", "number", filters_scope);
-        if (address_scope.length!=0)
-            this.getView().getModel().setValue("fsnl_fwarnmessage","附近有工程项目，请检查是否重复报备！");
-        //判断是否存在相同的报备项目
-        QFilter qFilter_lat = new QFilter("longitude","=", lng);
-        QFilter qFilter_lng = new QFilter("latitude","=",lat);
+        QFilter qFilter_lat = new QFilter("longitude","=", lng);//经度
+        QFilter qFilter_lng = new QFilter("latitude","=",lat);//维度
         QFilter[] filters_same = {qFilter_lat,qFilter_lng,qFilter_source,qFilter_id};
-        DynamicObject[] address_same = BusinessDataServiceHelper.load("cts_address", "number", filters_same);
-        if (address_same.length!=0)
+        //查询插件地址对象中与所选坐标相同的数据
+        DynamicObject[] address_same = BusinessDataServiceHelper.load("cts_address", "id", filters_same);
+        //判断是否存在相同的报备项目
+        if (isInBaseInfo(address_same))
             this.getView().getModel().setValue("fsnl_fwarnmessage","已有工程项目，请检查是否重复报备！");
+        else{
+            //先计算查询点的经纬度范围
+            double r = 6371;//地球半径千米
+            double dis = 0.5;//0.5千米距离
+            double dlng =  2*Math.asin(Math.sin(dis/(2*r))/Math.cos(lat*Math.PI/180));
+            dlng = dlng*180/Math.PI;//角度转为弧度
+            double dlat = dis/r;
+            dlat = dlat*180/Math.PI;
+            double minlat =lat-dlat;
+            double maxlat = lat+dlat;
+            double minlng = lng -dlng;
+            double maxlng = lng + dlng;
+            //判断方圆区间是否有工程报备
+            QFilter qFilter_minlng = new QFilter("longitude",">", minlng);
+            QFilter qFilter_maxlng = new QFilter("longitude","<",maxlng);
+            QFilter qFilter_minlat = new QFilter("latitude",">",minlat);
+            QFilter qFilter_maxlat = new QFilter("latitude","<",maxlat);
+            QFilter[] filters_scope = {qFilter_minlat,qFilter_maxlat,qFilter_minlng,qFilter_maxlng,qFilter_source,qFilter_id};
+            //查询插件地址对象中符合桌标范围的数据
+            DynamicObject[] address_scope = BusinessDataServiceHelper.load("cts_address", "id", filters_scope);
+            if (isInBaseInfo(address_scope))
+                this.getView().getModel().setValue("fsnl_fwarnmessage","附近有工程项目，请检查是否重复报备！");
+        }
+    }
 
+    /**
+     * 按地址信息查询是否存在报备申请单数据
+     * @param address 地址信息
+     * @return 是否存在数据
+     */
+    private boolean isInBaseInfo(DynamicObject[] address){
+        //遍历地址数据，拼接id条件
+        StringBuffer ids_sb = new StringBuffer();
+        for (DynamicObject addressInfo : address)
+            ids_sb.append(addressInfo.getString("id")+",");
+        QFilter qFilter_ids = new QFilter("id","in", StringUtil.removeTail(ids_sb));
+        QFilter[] filters_exists = {qFilter_ids};
+        return QueryServiceHelper.exists("fsnl_prj_appbaseinfo", filters_exists);
     }
 
 
