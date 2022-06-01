@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * @description：HTTP请求工具类,提供doget和都doPost请求
+ * @description：HTTP请求工具类,提供doget和都doPost请求,目前只有组织架构同步在使用;推荐使用金蝶实现好的工具类，即HttpUtils。class
  * @ClassName：HttpURLConnectionUtil.java
  * @author 陆海泳
  * @Date   2022/2/19 10:31:31
